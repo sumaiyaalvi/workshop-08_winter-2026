@@ -11,6 +11,8 @@ execute:
   warning: false # use this to make sure warnings don't show upl
 ---
 
+[deployed html url](https://sumaiyaalvi.github.io/workshop-08_winter-2026/code/workshop-code.html)
+
 In this workshop, we will answer the question: How do specific leaf area, water treatment, and species influence plant mass?  
 
 **Specific leaf area** is a continuous variable measured in cm^2^/g.  
@@ -154,8 +156,24 @@ Label the axes with units where appropriate.
 
 Add a title describing the relationship (e.g. as SLA increases, total mass ______). 
 
+```{r}
+#| label: sla and mass plot
 
-
+#base layer: ggplot
+ggplot(data = drought_exp_clean,
+       aes(x = sla,
+           y = total_g)
+       ) +
+  #first layer: adding scatter plot points to representn individual seedlings
+  geom_point(color = "#50a492") +
+  #labelling the x and y axes
+  labs(
+    title = "As SLA increases, total mass also increases",
+    x = "Specific Leaf Area (cm\U00B2/g)",
+    y = "Total plant mass (g)"
+  )
+  
+```
 
 
 ## What are the differences in total mass between water treatments?
@@ -166,11 +184,26 @@ Label the axes with units where appropriate.
 
 Add a title describing the differences in (mean or median) plant mass between water treatments.
 
+```{r}
+#| label: water treatment and mass plot
 
-
-
-
-
+ggplot(data = drought_exp_clean,
+       aes(x = water_treatment,
+           y = total_g,
+           color = water_treatment)) + 
+  geom_jitter(height = 0,
+              width = 0.2) +
+  scale_color_manual(values = c(
+    "Drought stressed" = ds_col,
+    "Well watered" = ww_col
+  )) + 
+  theme(legend.position = "none") +
+  labs(
+    x = "Water treatment",
+    y = "Total mass (g)",
+    title = "On average, plant mass in well watered treatment is higher than plant mass \nin drought stressed treatment"
+  )
+```
 
 ## What are the differences in total mass between species?
 
@@ -182,11 +215,37 @@ Add a title describing the differences in (mean or median) plant mass between sp
 
 Bonus: order the x-axis by decreasing mean plant mass _and_ wrap the long species names using the `label_wrap()` function from the `scales` package.
 
+```{r}
+#| label: species and plant mass plot
 
-
-
-
-
+#base layer: ggplot
+ggplot(data = drought_exp_clean,
+       aes(x = species_name,
+           y = total_g,
+           color = species_name)) +
+  #jitter to represent individual seedlings across species
+  geom_jitter(height = 0,
+              width = 0.2) +
+  #use custom colors for points
+  scale_color_manual(values = c(
+    "Lotus scoparious" = lotsco_col,
+    "Penstemon centranthifolius" = pencen_col,
+    "Salvia leucophylla" = salleu_col,
+    "Encelia californica" = enccal_col,
+    "Stipa pulchra" = stipul_col,
+    "Eschscholzia californica" = esccal_col,
+    "Grindelia camporum" = gricam_col
+  )) +
+  #breaks x axis labels so that they don't overlap each other
+  #wrap long x-axis labels
+  scale_x_discrete(labels = label_wrap(10)) +
+  #relabel axis titles
+  labs(x = "Species name",
+       y = "Total mass (g)",
+       title = "Plant mass differs across species") +
+  #take out legend
+  theme(legend.position = "none")
+```
 
 
 # 4. Fitting models
